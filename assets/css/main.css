@@ -1,0 +1,134 @@
+body {
+    background-color: #18191a;
+    color: whitesmoke;
+}
+
+.main {
+    background-color: #18191a;
+}
+
+.sidebar {
+    background-color: #18191a;
+}
+
+.footer {
+    background-color: #242526;
+    border-top: none;
+}
+
+/* header */
+.header {
+    background-color: #242526;
+}
+
+#choose1:hover {
+    background-color: #3a3b3c;
+}
+
+#choose2:hover {
+    background-color: #3a3b3c;
+}
+
+.dropdown-menu {
+    background-color: #18191a;
+}
+
+#setting:hover {
+    background-color: #3a3b3c;
+}
+
+h1 i {
+    color: whitesmoke;
+}
+
+#search-btn {
+    color: whitesmoke;
+}
+
+.search-bar {
+    color: #7a7c7f;
+    background-color: #3a3b3c;
+}
+
+/* sidebar */
+a.nav-link:hover {
+    background-color: #3a3b3c;
+}
+
+a:hover {
+    background-color: #3a3b3c;
+}
+
+/*  general*/
+.modal-dialog {
+    max-width: 600px;
+}
+
+label {
+    padding-top: 1rem;
+}
+
+.jumbotron {
+    background-color: #242526;
+}
+
+h1,
+h2,
+h3,
+span,
+nav,
+p,
+a i {
+    color: whitesmoke;
+}
+
+.table {
+    background-color: #242526;
+    color: whitesmoke;
+    width: 100%;
+}
+
+.card {
+    background-color: #242526;
+    color: whitesmoke;
+}
+
+
+#forms-nav li a:hover {
+    background-color: #3a3b3c;
+}
+
+input {
+    background-color: #3a3b3c;
+    border-color: none;
+}
+
+nav ol li {
+    color: whitesmoke;
+}
+
+.card-header {
+    background-color: #242526;
+}
+
+.btn {
+    background-color: #303031;
+    border: none;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    background-color: #242526;
+}
+
+form .form-control {
+    background-color: #3a3b3c;
+    color: whitesmoke;
+}
+
+option {
+    background-color: #3a3b3c;
+    color: whitesmoke;
+    border-color: none;
+}
