@@ -1,14 +1,3 @@
-<?php
-include './config/connection.php';
-include './objects/clslocals.php';
-
-$database = new intranetconnect();
-$db = $database->connect();
-
-$manila = new clslocals($db);
-$view_manila = $manila->manila_locals();
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -94,47 +83,7 @@ $view_manila = $manila->manila_locals();
                                     </tr>
                                 </thead>
                                 <tbody id="post-body">
-                                    <?php
-                                    while ($row = $view_manila->fetch(PDO::FETCH_ASSOC)) {
-                                        if ($row['status'] != 0) {
-                                            $status = 'ACTIVE';
-                                            echo
-                                            '
-                                        <tr>
-                                            <td><input type="checkbox" name="form_manila" class="checklist" value="' . $row['id'] . '"></td>
-                                            <td>' . $row['local_no'] . '</td>
-                                            <td>
-                                                <center>' . $row['name'] . '</center>
-                                            </td>
-                                            <td>
-                                                <center>' . $row['department'] . '</center>
-                                            </td>
-                                            <td >
-                                            <a href="#" style="color:green;"><center>' . $status . '</center></a>
-                                            </td>
-                                        </tr>
-                                            ';
-                                        } else {
-                                            $status = 'INACTIVE';
-                                            echo
-                                            '
-                                    <tr>
-                                        <td><input type="checkbox" name="form_manila" class="inactive checklist" value="' . $row['id'] . '"></td>
-                                        <td>' . $row['local_no'] . '</td>
-                                        <td>
-                                            <center>' . $row['name'] . '</center>
-                                        </td>
-                                        <td>
-                                        <center>' . $row['department'] . '</center>
-                                    </td>
-                                    <td style="color:red;">
-                                    <a href="#" class="status" value="' . $row['status'] . '" style="color:red; "><center data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Retrieve data?">' . $status . '</center></a>
-                                    </td>
-                                    </tr>
-                                        ';
-                                        }
-                                    }
-                                    ?>
+
                                 </tbody>
                             </table>
                         </div>
@@ -230,7 +179,27 @@ $view_manila = $manila->manila_locals();
         $(document).ready(function() {
 
             <?php include 'includes/hover.php'; ?>
-            $('.table').DataTable();
+            $('.table').DataTable({
+                "fnCreateRow": function(nRow, aData, iDataIndex) {
+                    $(nRow).attr('id', aData[0]);
+                },
+                'serverSide': 'true',
+                'processing': 'true',
+                'paging': 'true',
+                'order': [],
+                'ajax': {
+                    'url': 'controls/manila_table.php',
+                    'type': 'post',
+                },
+                "aoColumnDefs": [{
+                    "bSortable": 'true',
+                    "aTargets": [4]
+                }, ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": 0
+                }]
+            });
             // change the color of datatable filter
             $('.dataTables_filter input').css("color", "whitesmoke").css("background-color", "#171819")
             $('.card .dataTables_length select').css("color", "whitesmoke").css("background-color", "#171819")
@@ -346,7 +315,7 @@ $view_manila = $manila->manila_locals();
         $('#btn_update').on('click', function(e) {
             e.preventDefault();
 
-            const upd_id = $('#upd-id').val();
+            const upd_id = $('#upd_id').val();
             const upd_local_no = $('#upd-local_no').val();
             const upd_dept = $('#upd-department').val();
             const upd_name = $('#upd-name').val();
@@ -360,7 +329,7 @@ $view_manila = $manila->manila_locals();
 
                 success: function(response) {
                     if (response > 0) {
-                        alert('Users Successfully update!');
+                        alert('Local Successfully update!');
                         location.reload();
                     }
                 }
@@ -391,7 +360,7 @@ $view_manila = $manila->manila_locals();
 
                         success: function(response) {
                             if (response > 0) {
-                                alert('Users successfully Removed!');
+                                alert('Local successfully Removed!');
                                 location.reload(500);
                             }
                         }

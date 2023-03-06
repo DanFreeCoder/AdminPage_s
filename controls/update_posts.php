@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsposts.php';
+include '../objects/clsposts.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();
@@ -15,7 +15,7 @@ $post->date_added = $_POST['date_added'];
 $upd_post = $post->update_post();
 
 if ($upd_post) {
-    echo 1;
+    echo $_POST['id'];
 } else {
     echo 0;
 }

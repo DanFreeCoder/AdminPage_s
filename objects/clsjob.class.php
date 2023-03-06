@@ -8,9 +8,9 @@ class clsjob
         $this->con = $db;
     }
 
-    public function job_details()
+    public function job_details($sql)
     {
-        $sql = "SELECT id, position, no_of_job, summary, status FROM " . $this->tblname . " WHERE no_of_job != 0 AND status != 0";
+        // $sql = "SELECT id, position, no_of_job, summary, status FROM " . $this->tblname . " WHERE no_of_job != 0 AND status != 0";
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $sel = $this->con->prepare($sql);
 

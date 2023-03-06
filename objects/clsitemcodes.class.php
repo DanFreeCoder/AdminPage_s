@@ -17,6 +17,15 @@ class clsitemcodes
         $sel->execute();
         return $sel;
     }
+    public function itemcode()
+    {
+        $sql = "SELECT * FROM itemcodes WHERE status != 0";
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $sel = $this->con->prepare($sql);
+
+        $sel->execute();
+        return $sel;
+    }
 
     public function code($array)
     {
@@ -35,7 +44,7 @@ class clsitemcodes
 
     public function get_codes_count()
     {
-        $sql = "SELECT COUNT(*) as total_record FROM itemcodes WHERE status != 0";
+        $sql = "SELECT * FROM itemcodes WHERE status != 0";
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $count = $this->con->prepare($sql);
 

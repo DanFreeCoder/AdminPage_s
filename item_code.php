@@ -1,13 +1,5 @@
 <?php
-include './config/connection.php';
-include './objects/clsitemcodes.php';
-
-$database = new intranetconnect();
-$db = $database->connect();
-
-$page = new clsitemcodes($db);
-
-
+include './autoloader/autoloader.php';
 
 ?>
 <!DOCTYPE html>
@@ -90,7 +82,7 @@ $page = new clsitemcodes($db);
                         </div>
 
                         <div class="card post">
-                            <table style="width:100%;" id="post-table" class="table table-dark table-striped mt-3" cellspacing="0">
+                            <table style="width:100%;" class="table table-dark table-striped mt-3 overflow-auto" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="check_all"></input></th>
@@ -110,26 +102,7 @@ $page = new clsitemcodes($db);
                                     </tr>
                                 </thead>
                                 <tbody id="post-body">
-                                    <?php
-                                    //operations
-                                    $rows = $page->itemcodes();
-
-                                    while ($row = $rows->fetch(PDO::FETCH_ASSOC)) {
-                                        echo '
-                    <tr>
-                    <td><input type="checkbox" name="form_code" class="checklist" value="' . $row['id'] . '"></td>
-                    <td>' . $row['itemcode'] . '</td>
-                    <td>' . $row['itemdesc'] . '</td>
-                    <td>' . $row['unit'] . '</td>
-                    <td>' . $row['class'] . '</td>
-                    <td>' . $row['category'] . '</td>
-              
-
-                </tr>
-                    ';
-                                    }
-
-                                    ?>
+                                    <!-- datatable serverside goes here -->
                                 </tbody>
                             </table>
 
@@ -161,33 +134,49 @@ $page = new clsitemcodes($db);
 
     <script>
         $(document).ready(function() {
-
-
-            // log out action
-            $('.logout').on('click', function(e) {
-                e.preventDefault();
-                if (confirm('You are about to sign out!')) {
-                    location.href = $(this).attr("href");
-                }
+            $('.table').DataTable({
+                "fnCreateRow": function(nRow, aData, iDataIndex) {
+                    $(nRow).attr('id', aData[0]);
+                },
+                'serverSide': 'true',
+                'processing': 'true',
+                'paging': 'true',
+                'order': [],
+                'ajax': {
+                    'url': 'controls/itemcodes_table.php',
+                    'type': 'post',
+                },
+                "aoColumnDefs": [{
+                    "bSortable": 'true',
+                    "aTargets": [5]
+                }, ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": 0
+                }]
             });
-
-            <?php include 'includes/hover.php'; ?>
-            $('#post-table').DataTable({
-                "aLengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ]
-            });
-            //change the color of datatable filter
+            // change the color of datatable filter
             $('.dataTables_filter input').css("color", "whitesmoke").css("background-color", "#171819")
             $('.card .dataTables_length select').css("color", "whitesmoke").css("background-color", "#171819")
 
-        });
-        $('input').blur(function(e) {
-            $(this).css("background-color", "#3a3b3c").css("color", "whitesmoke")
+            // search capability
+            $('#search').keyup(function() {
+                const search = $(this).val();
+                $.ajax({
+                    type: 'POST',
+                    url: './controls/search.php',
+                    data: {
+                        search: search
+                    },
+                    success: function(html) {
+                        $('#data').html(html);
+                    }
+                })
+            });
+
+
         })
     </script>
-
     <!--select and hide the EDIT button when multiple selection happens-->
     <script>
         $('#check_all').change(function(e) {
@@ -197,10 +186,12 @@ $page = new clsitemcodes($db);
                 $('tbody tr td input[type="checkbox"]').each(function() {
                     $('td input:checkbox', table).prop('checked', true);
                 });
+                $("#edit_user").hide(500);
             } else {
                 $('tbody tr td input[type="checkbox"]').each(function() {
                     $('td input:checkbox', table).prop('checked', false);
                 });
+                $("#edit_user").show(500);
             }
 
         });
@@ -216,11 +207,11 @@ $page = new clsitemcodes($db);
             $('input:checkbox[name=form_code]:checked').each(function() {
                 form_id.push($(this).val());
             })
+
             if (form_id < 1) {
-                alert('Please select the specific user');
+                alert('Please select the specific item code');
             } else {
-                if (confirm('Warning: Are you sure to remove this user?')) {
-                    alert(form_id)
+                if (confirm('Warning: Are you sure to remove this item codes?')) {
                     $.ajax({
                         type: 'POST',
                         url: 'controls/delete_code.php',
@@ -230,10 +221,8 @@ $page = new clsitemcodes($db);
 
                         success: function(response) {
                             if (response > 0) {
-                                alert('Users successfully Removed!');
+                                alert('Item successfully Removed!')
                                 location.reload(500);
-                            } else {
-                                alert('error');
                             }
                         }
                     })
@@ -245,36 +234,6 @@ $page = new clsitemcodes($db);
 
         });
     </script>
-
-    <!-- modal Setting Update -->
-    <!-- <script>
-    function update() {
-      const password = $('#password').val();
-      const retype = $('#retype_password').val();
-      const id = $('#upd-id').val();
-      const mydata = 'id=' + id + '&password=' + password;
-      if (password != '') {
-        if (password == retype) {
-          $.ajax({
-            type: 'POST',
-            url: 'controls/update-pass.php',
-            data: mydata,
-            success: function(response) {
-              if (response > 0) {
-                $('#settingmodal').modal('toggle')
-                $('#user_current_pass').modal('show')
-              }
-            }
-          })
-        } else {
-          alert('password is not match')
-        }
-      } else {
-        alert('Fill the neccessary fields');
-      }
-
-    }
-  </script> -->
 
 </body>
 

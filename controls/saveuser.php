@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsusers.php';
+include '../objects/clsusers.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();
@@ -18,6 +18,7 @@ $users->verification_code = "0";
 $users->security_q = "0";
 $users->security_a = "0";
 $users->status = 1;
+$users->onli = 1;
 
 
 $ex = $users->save();

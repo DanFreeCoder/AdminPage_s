@@ -1,12 +1,7 @@
 <?php
-include './config/connection.php';
-include './objects/clsposts.php';
+include './autoloader/autoloader.php';
 
-$database = new intranetconnect();
-$db = $database->connect();
 
-$posts = new clsposts($db);
-$view_posts = $posts->posts_details();
 
 ?>
 <!DOCTYPE html>
@@ -92,43 +87,7 @@ $view_posts = $posts->posts_details();
                   </tr>
                 </thead>
                 <tbody id="post-body">
-                  <?php
-                  while ($row = $view_posts->fetch(PDO::FETCH_ASSOC)) {
-                    if ($row['status'] != 0) {
-                      $status = 'ACTIVE';
-                      echo ' 
-                      <tr>
-                      <td><input type="checkbox" name="form_post" class="checklist" value="' . $row['id'] . '"></td>
-                      <td>' . $row['type'] . '</td>
-                      <td>
-                        <center>' . $row['department'] . '</center>
-                      </td>
-                      <td>
-                        <center>' . $row['date_added'] . '</center>
-                      </td>
-                      <td style="color: green;">
-                        <center>' . $status . '</center>
-                      </td>
-                      </tr>';
-                    } else {
-                      $status = 'INACTIVE';
-                      echo ' 
-                      <tr>
-                      <td><input type="checkbox" name="form_post" class="inactive checklist" value="' . $row['id'] . '"></td>
-                      <td>' . $row['type'] . '</td>
-                      <td>
-                        <center>' . $row['department'] . '</center>
-                      </td>
-                      <td>
-                        <center>' . $row['date_added'] . '</center>
-                      </td>
-                      <td style="color: red;">
-                      <a href="#" class="status" value="' . $row['status'] . '" style="color:red; "><center data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Retrieve data?">' . $status . '</center></a>
-                      </td>
-                      </tr>';
-                    }
-                  }
-                  ?>
+                  <!-- table data goes here -->
                 </tbody>
               </table>
             </div>
@@ -158,7 +117,7 @@ $view_posts = $posts->posts_details();
         </div>
         <div class="modal-footer" id="">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="btn_update_post" class="btn btn-primary">Save changes</button>
+          <button type="button" id="btn_update" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
@@ -200,26 +159,30 @@ $view_posts = $posts->posts_details();
   <script src="assets/js/main.js"></script>
   <script>
     $(document).ready(function() {
-
-      // retrieve data
-      $('.status').on('click', function(e) {
-        e.preventDefault();
-        const id = $('.inactive').val();
-        const status = $(this).val();
-        const mydata = 'id=' + id + '&status=' + status;
-        $.ajax({
-          type: 'POST',
-          url: 'controls/retrieve_post.php',
-          data: mydata,
-
-          success: function(response) {
-            if (response > 0) {
-              alert('Successfully Retrieve');
-              location.reload();
-            }
-          }
-        })
+      $('.table').DataTable({
+        "fnCreateRow": function(nRow, aData, iDataIndex) {
+          $(nRow).attr('id', aData[0]);
+        },
+        'serverSide': 'true',
+        'processing': 'true',
+        'paging': 'true',
+        'order': [],
+        'ajax': {
+          'url': 'controls/post_table.php',
+          'type': 'post',
+        },
+        "aoColumnDefs": [{
+          "bSortable": 'true',
+          "aTargets": [4]
+        }, ],
+        "columnDefs": [{
+          "orderable": false,
+          "targets": 0
+        }]
       });
+
+
+
       // log out action
       $('.logout').on('click', function(e) {
         e.preventDefault();
@@ -233,12 +196,39 @@ $view_posts = $posts->posts_details();
       })
 
       <?php include 'includes/hover.php'; ?>
-      $('.table').DataTable();
+
       // change the color of datatable filter
       $('.dataTables_filter input').css("color", "whitesmoke").css("background-color", "#171819")
       $('.card .dataTables_length select').css("color", "whitesmoke").css("background-color", "#171819")
 
 
+    });
+  </script>
+  <script>
+    $('.status').hover(function() {
+      $(this).prop('title', 'Retrieve Data?');
+    })
+  </script>
+  <script>
+    // retrieve data
+    $('.status').on('click', function(e) {
+      e.preventDefault();
+      const id = $('.inactive').val();
+      const status = $(this).val();
+      const mydata = 'id=' + id + '&status=' + status;
+
+      $.ajax({
+        type: 'POST',
+        url: 'controls/retrieve_post.php',
+        data: mydata,
+
+        success: function(response) {
+          if (response > 0) {
+            alert('Successfully Retrieve');
+            location.reload();
+          }
+        }
+      })
     });
   </script>
 
@@ -271,7 +261,7 @@ $view_posts = $posts->posts_details();
       $('input:checkbox[name=form_post]:checked').each(function() {
         form_id.push($(this).val());
       });
-
+      alert(form_id)
       if (form_id < 1) {
         alert('Please select the specific user');
       } else {
@@ -286,7 +276,7 @@ $view_posts = $posts->posts_details();
 
             success: function(response) {
               if (response > 0) {
-                alert('Users successfully Removed!')
+                alert('Post successfully Removed!')
                 location.reload(500);
               }
             }
@@ -327,10 +317,10 @@ $view_posts = $posts->posts_details();
   </script>
   <!-- save update modal -->
   <script>
-    $('#btn_update_post').on('click', function(e) {
+    $('#btn_update').on('click', function(e) {
       e.preventDefault();
 
-      const upd_id = $('#upd-id').val();
+      const upd_id = $('#upd_id').val();
       const upd_title = $('#upd-title').val();
       const upd_dept = $('#upd-dept').val();
       const upd_date_added = $('#upd-date_added').val();

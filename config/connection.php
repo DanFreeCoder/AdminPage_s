@@ -1,6 +1,8 @@
 <?php
+
 class intranetconnect
 {
+
     private $host = 'localhost';
     private $dbname = 'intranetdbv2';
     private $username = 'root';

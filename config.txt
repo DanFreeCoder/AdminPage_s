@@ -1,0 +1,2 @@
+All classes have a naming convention in order to work with the autoloader properly.
+The database connection is already declared in the autoloader and has multiple connections.

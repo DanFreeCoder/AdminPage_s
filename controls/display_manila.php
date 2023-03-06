@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clslocals.php';
+include '../objects/clslocals.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();
@@ -16,7 +16,7 @@ while ($row = $view_manila->fetch(PDO::FETCH_ASSOC)) {
         <form>
         <label>Local Number</label>
         <div>
-        <input type="text" class="form-control" id="upd-id" value="' . $row['id'] . '" hidden>
+        <input type="text" class="form-control" id="upd_id" value="' . $row['id'] . '" hidden>
             <input type="text" id="upd-local_no" class="form-control" value="' . $row['local_no'] . '">
         </div>
         <label>Department</label>

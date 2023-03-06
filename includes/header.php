@@ -1,9 +1,11 @@
 <?php
+
 session_start();
 if ($_SESSION['access_type_id'] != 1) {
     header('Location: ../adminPage/controls/logout.php');
+} else if ($_SESSION['onli'] != 1) {
+    header('Location: ../adminPage/controls/logout.php');
 }
-
 ?>
 <!-- ======= Header ======= -->
 <header id="header" class="header fixed-top d-flex align-items-center">
@@ -16,12 +18,13 @@ if ($_SESSION['access_type_id'] != 1) {
         <i style="color: whitesmoke;" class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
+    <!-- <div class="search-bar">
         <form class="search-form d-flex align-items-center" method="POST" action="#">
-            <input style="color: #7a7c7f;" type="text" name="query" placeholder="Search" title="Enter search keyword">
+            <input style="color: #7a7c7f;" type="text" class="search-input" name="query" placeholder="Search" title="Enter search keyword">
             <button type="submit" title="Search"><i style="color: #b0b3b8;" class="bi bi-search"></i></button>
         </form>
-    </div><!-- End Search Bar -->
+    </div> -->
+    <!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">

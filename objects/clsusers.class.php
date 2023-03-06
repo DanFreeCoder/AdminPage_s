@@ -66,12 +66,13 @@ class clsusers
         if (session_destroy()) {
             return true;
             unset($_SESSION['username']);
+            unset($_SESSION['onli']);
         }
     }
 
-    public function user_details()
+    public function user_details($sql)
     {
-        $sql = "SELECT id, firstname, lastname, username, access_type_id, log_count, verification_code, security_q, security_a, status FROM " . $this->tblname . " WHERE status != 0 ORDER BY access_type_id asc";
+        // $sql = "SELECT id, firstname, lastname, username, access_type_id, log_count, verification_code, security_q, security_a, status FROM " . $this->tblname . " WHERE status != 0 ORDER BY access_type_id asc";
         $this->con->setAttribute(PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE);
         $sel = $this->con->prepare($sql);
 
@@ -107,7 +108,7 @@ class clsusers
     }
     public function save()
     {
-        $sql = "INSERT INTO users SET firstname=?, lastname=?, email=?, username=?, password=?, access_type_id=?, log_count=?, verification_code=?, security_q=?, security_a=?, status=?";
+        $sql = "INSERT INTO users SET firstname=?, lastname=?, email=?, username=?, password=?, access_type_id=?, log_count=?, verification_code=?, security_q=?, security_a=?, status=?, onli=?";
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
         $save = $this->con->prepare($sql);
@@ -122,6 +123,7 @@ class clsusers
         $save->bindParam(9, $this->security_q);
         $save->bindParam(10, $this->security_a);
         $save->bindParam(11, $this->status);
+        $save->bindParam(12, $this->onli);
 
         if ($save->execute()) {
             return true;
@@ -185,18 +187,60 @@ class clsusers
         $count->execute();
         return $count;
     }
-    public function userss()
+    public function userss($sql)
     {
-        $sql = "SELECT * FROM users";
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $user = $this->con->prepare($sql);
 
         $user->execute();
 
         return $user;
+    }
 
-        while ($row = $user->fetch(PDO::FETCH_ASSOC)) {
-            return $row;
+    public function set_session()
+    {
+        $sql = "UPDATE users SET onli = ?, log = ? WHERE id = ?";
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $set = $this->con->prepare($sql);
+
+        $set->bindParam(1, $this->onli);
+        $set->bindParam(2, $this->log);
+        $set->bindParam(3, $this->id);
+
+        if ($set->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function set_log()
+    {
+        $sql = "UPDATE users SET  log = ? WHERE id = ?";
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $set = $this->con->prepare($sql);
+
+        $set->bindParam(1, $this->log);
+        $set->bindParam(2, $this->id);
+
+        if ($set->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function destroy_session()
+    {
+        $sql = "UPDATE users SET onli = ? WHERE id = ?";
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $set = $this->con->prepare($sql);
+
+        $set->bindParam(1, $this->onli);
+        $set->bindParaM(2, $this->id);
+
+        if ($set->execute()) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

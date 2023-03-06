@@ -1,14 +1,7 @@
 <?php
-include './config/connection.php';
-include './objects/clsusers.php';
-include './objects/clsdepartment.php';
+include './autoloader/autoloader.php';
 
-$database = new intranetconnect();
-$db = $database->connect();
-
-$users = new clsusers($db);
 $dept = new clsdepartment($db);
-$view_users = $users->user_details();
 $get_dept = $dept->get_dept();
 
 
@@ -92,9 +85,10 @@ $get_dept = $dept->get_dept();
                             <div id="edit_user" class="fa-light fa-pen-to-square btn btn-primary"> <i class="bi bi-pencil-square"></i>Edit</div>
                             <div id="reset_pass" class="fa-light fa-pen-to-square btn btn-secondary"><i class="bi bi-lock"></i>Reset Password</div>
                             <div class="delete_user btn btn-danger"> <i class="bi bi-trash3"></i>Remove</div>
+                            <div class="destroy btn btn-danger"><i class="bi bi-person-x-fill"></i> Restrict</div>
                         </div>
                         <div class="card post">
-                            <table id="post-table" class="table table-dark table-striped" width="100%" cellspacing="0">
+                            <table id="post-table" class="table table-dark table-striped table-responsive" cellspacing="0" style="width:100%;">
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="check_all"></input></th>
@@ -111,38 +105,35 @@ $get_dept = $dept->get_dept();
                                         <th>
                                             <center>Action</center>
                                         </th>
+                                        <th>
+                                            <center>Log</center>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody id="post-body">
-                                    <?php
-                                    while ($row = $view_users->fetch(PDO::FETCH_ASSOC)) {
-                                        if ($row['access_type_id'] == 1) {
-                                            $role = 'Administrator';
-                                        } elseif ($row['access_type_id'] == 2) {
-                                            $role = 'HR';
-                                        } else {
-                                            $role = 'Staff';
-                                        }
-                                        echo '
-                                    <tr>
-                                    <td><input type="checkbox" name="form_user" id="checkbox_user" class="form_user" value="' . $row['id'] . '" ></td>
-                                    <td>' . $row['firstname'] . '</td>
-                                    <td>
-                                        <center>' . $row['lastname'] . '</center>
-                                    </td>
-                                    <td>
-                                        <center>' . $row['username'] . '</center>
-                                    </td>
-                                    <td>' . $role . '</td>
-                                    <td>
-                                        <center><a href="#" value="' . $row['id'] . '" class="viewUserAction"><i id="action" class="bi bi-arrows-move"></i></a>
-                                    </td>
-                                    </center>
-                                </tr>
-                                ';
-                                    }
-                                    ?>
+                                    <!-- data does here -->
                                 </tbody>
+                                <tfoot>
+                                    <tr style="color:#576574">
+                                        <th></th>
+                                        <th>Firstname</th>
+                                        <th>
+                                            <center>Lastname</center>
+                                        </th>
+                                        <th>
+                                            <center>Username</center>
+                                        </th>
+                                        <th>
+                                            <center>Role</center>
+                                        </th>
+                                        <th>
+                                            <center>Action</center>
+                                        </th>
+                                        <th>
+                                            <center>Log</center>
+                                        </th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div><!-- End Left side columns -->
@@ -291,11 +282,27 @@ $get_dept = $dept->get_dept();
                 $(this).css("background-color", "#3a3b3c").css("color", "whitesmoke")
             })
             <?php include 'includes/hover.php'; ?>
-            $('#post-table').DataTable({
-                "aLengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ]
+            $('.table').DataTable({
+
+                "fnCreateRow": function(nRow, aData, iDataIndex) {
+                    $(nRow).attr('id', aData[0]);
+                },
+                'serverSide': 'true',
+                'processing': 'true',
+                'paging': 'true',
+                'order': [],
+                'ajax': {
+                    'url': 'controls/users_table.php',
+                    'type': 'post',
+                },
+                "aoColumnDefs": [{
+                    "bSortable": 'true',
+                    "aTargets": [6]
+                }, ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": [0, 5] //disable sorting these column
+                }]
             });
 
             // change the color of datatable filter
@@ -364,7 +371,7 @@ $get_dept = $dept->get_dept();
         })
     </script>
 
-    <!-- USERNAME AUTO GENERATE FOR MODAL UPDATE -->
+    <!-- USERNAME A jui888888888888888888888888888888UTO GENERATE FOR MODAL UPDATE -->
     <script>
         $('#upd-firstname').blur(function(e) {
             e.preventDefault();
@@ -397,7 +404,7 @@ $get_dept = $dept->get_dept();
         $('#btn_update').on('click', function(e) {
             e.preventDefault();
 
-            const upd_id = $('#upd-id').val();
+            const upd_id = $('#upd_id').val();
             const upd_fname = $('#upd-firstname').val();
             const upd_lname = $('#upd-lastname').val();
             const upd_email = $('#upd-email').val();
@@ -466,6 +473,7 @@ $get_dept = $dept->get_dept();
 
         });
     </script>
+
 
     <!-- get all value of checked item -->
     <script>
@@ -584,8 +592,53 @@ $get_dept = $dept->get_dept();
 
         }
     </script>
+    <!-- disconnect users -->
+    <script>
+        $(document).on('click', '.destroy', function() {
+            var form_id = []
 
+            $('input:checkbox[name=form_user]:checked').each(function() {
+                form_id.push($(this).val());
+            })
+            if (form_id < 1) {
+                alert('Please select the specific user');
+            } else {
+                if (confirm('Warning: This user will not be able to access this system.')) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'controls/destroy.php',
+                        data: {
+                            id: form_id
+                        },
 
+                        success: function(response) {
+                            if (response > 0) {
+                                alert('Users successfully Restricted!')
+
+                                //try this way once it connected to users or not in localhost server
+                                // $.ajax({
+                                //     type: 'POST',
+                                //     url: 'controls/activate.php',
+                                //     data: {
+                                //         id: form_id
+                                //     },
+                                //     success: function(response) {
+                                //         if (response > 0) {
+                                //             alert('success')
+                                //             location.reload(500);
+                                //         }
+                                //     }
+                                // })
+                                location.reload(500);
+                            }
+                        }
+                    })
+
+                }
+
+            }
+        })
+    </script>
 </body>
 
 </html>

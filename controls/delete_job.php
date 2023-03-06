@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsjob.php';
+include '../objects/clsjob.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();

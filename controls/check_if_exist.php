@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsusers.php';
+include '../objects/clsusers.class.php';
 session_start();
 $database = new intranetconnect();
 $db = $database->connect();
@@ -13,7 +13,7 @@ $access = $users->check_if_exist();
 if ($row = $access->fetch(PDO::FETCH_ASSOC)) {
 
     if ($row['access_type_id'] == 1) {
-        header('Location: ../index.php');
+        header('location: ./log.php');
     } else {
         header('Location: ../index_login.php');
     }

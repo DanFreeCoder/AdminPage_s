@@ -1,9 +1,6 @@
 <?php
-include './config/connection.php';
-include './objects/clsitemcodes.php';
+include './autoloader/autoloader.php';
 
-$database = new intranetconnect();
-$db = $database->connect();
 $page = new clsitemcodes($db);
 $count = new clsitemcodes($db);
 
@@ -83,7 +80,6 @@ if (isset($_GET['page_no']) && $_GET['page_no'] != "") {
                     <td>' . $row['unit'] . '</td>
                     <td>' . $row['category'] . '</td>
                     <td>' . $row['status'] . '</td>
-
                 </tr>
                     ';
                 }
@@ -93,9 +89,7 @@ if (isset($_GET['page_no']) && $_GET['page_no'] != "") {
                 <!-- get the total of codes -->
                 <?php
                 $row2 = $count->get_codes_count();
-                while ($row1 = $row2->fetch(PDO::FETCH_ASSOC)) {
-                    $total_of_rows = $row1['total_record'];
-                }
+                $total_of_rows = $row2->rowCount();
                 $totalcount = ceil($total_of_rows / $total_record_perpage);
                 ?>
             </tbody>

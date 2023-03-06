@@ -25,9 +25,9 @@ class clslocals
             return false;
         }
     }
-    public function cebu_locals()
+    public function cebu_locals($sql)
     {
-        $sql = "SELECT id, local_no, name, department, status FROM locals WHERE trunkline != 2 ORDER BY ID DESC";
+
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $sel = $this->con->prepare($sql);
 
@@ -93,9 +93,9 @@ class clslocals
         }
     }
 
-    public function manila_locals()
+    public function manila_locals($sql)
     {
-        $sql = "SELECT id, local_no, name, department, status FROM locals WHERE trunkline != 1 ORDER BY ID DESC";
+
         $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $sel = $this->con->prepare($sql);
 

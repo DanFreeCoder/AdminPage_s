@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsjob.php';
+include '../objects/clsjob.class.php';
 $database = new intranetconnect();
 $db = $database->connect();
 
@@ -17,7 +17,7 @@ while ($row = $view_job->fetch(PDO::FETCH_ASSOC)) {
     <div class="row">
         <div class="col-md-6">
             <div class="card-header">Add a Job Vacancies
-            <input type="text" hidden id="upd-id" value="' . $row['id'] . '">
+            <input type="text" hidden id="upd_id" value="' . $row['id'] . '">
                 <input type="text" class="form-control" placeholder="Position" aria-label="Username" id="upd-job_position" value="' . $row['position'] . '">
             </div>
         </div>

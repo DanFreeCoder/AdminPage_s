@@ -1,13 +1,5 @@
 <?php
-include './config/connection.php';
-include './objects/clsjob.php';
-
-$database = new intranetconnect();
-$db = $database->connect();
-
-$job = new clsjob($db);
-$view_job = $job->job_details();
-
+include './autoloader/autoloader.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,7 +111,7 @@ $view_job = $job->job_details();
                                 <p><strong>Innoland need of the following position below.</strong></p>
                             </div>
                             <div class="card">
-                                <table class="table table-dark table-striped mt-2">
+                                <table class="table table-dark table-striped mt-2 table-responsive container-fluid">
                                     <thead>
                                         <tr>
                                             <th scope="col">Position</th>
@@ -130,17 +122,7 @@ $view_job = $job->job_details();
                                     </thead>
                                     <tbody>
                                         <?php
-                                        while ($row = $view_job->fetch(PDO::FETCH_ASSOC)) {
-                                            echo '
-                                        <tr>
-                                        <td>' . $row['position'] . '</td>
-                                        <td>' . $row['no_of_job'] . '</td>
-                                        <td>' . $row['summary'] . '</td>
-                                        <td>
-                                            <a style="color:#07b9ad;" class="edit" value="' . $row['id'] . '">Edit</a>|<a style="color:red;" class="remove" value="' . $row['id'] . '">Remove</a>
-                                        </td>
-                                    </tr>';
-                                        }
+
                                         ?>
                                     </tbody>
                                 </table>
@@ -210,7 +192,30 @@ $view_job = $job->job_details();
 
     <script>
         $(document).ready(function() {
-
+            $('#job_clear').on('click', function() {
+                $('#job_sum').val('');
+            })
+            $('.table').DataTable({
+                "fnCreateRow": function(nRow, aData, iDataIndex) {
+                    $(nRow).attr('id', aData[0]);
+                },
+                'serverSide': 'true',
+                'processing': 'true',
+                'paging': 'true',
+                'order': [],
+                'ajax': {
+                    'url': 'controls/job_table.php',
+                    'type': 'post',
+                },
+                "aoColumnDefs": [{
+                    "bSortable": 'true',
+                    "aTargets": [3]
+                }, ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": 3 //unable sorting in action's column
+                }]
+            });
 
             // log out action
             $('.logout').on('click', function(e) {
@@ -225,7 +230,6 @@ $view_job = $job->job_details();
             })
 
             <?php include 'includes/hover.php'; ?>
-            $('.table').DataTable();
             // change the color of datatable filter
             $('.dataTables_filter input').css("color", "whitesmoke").css("background-color", "#171819")
             $('.card .dataTables_length select').css("color", "whitesmoke").css("background-color", "#171819")
@@ -254,36 +258,19 @@ $view_job = $job->job_details();
                 success: function(response) {
                     if (response > 0) {
                         alert("Add Successfully");
+                        location.reload();
                     }
                 }
             })
         })
     </script>
-    <!-- select job details -->
-    <script>
-        $('.edit').on('click', function(e) {
-            e.preventDefault();
 
-            const id = $(this).attr('value');
-            mydata = 'id=' + id;
-            $.ajax({
-                type: 'POST',
-                url: 'controls/display_job.php',
-                data: mydata,
-
-                success: function(html) {
-                    $('#edit-job').modal('show');
-                    $('#modal-body').html(html);
-                }
-            })
-        })
-    </script>
 
     <!-- Udpate Action -->
     <script>
         $(document).on('click', '.btn_update', function(e) {
             e.preventDefault();
-            const upd_id = $('#upd-id').val();
+            const upd_id = $('#upd_id').val();
             const upd_job_po = $('#upd-job_position').val();
             const upd_job_no = $('#upd-job_no').val();
             const upd_job_summary = $('#upd-job_summary').val();
@@ -304,30 +291,6 @@ $view_job = $job->job_details();
 
         })
     </script>
-    <!-- delete job list -->
-    <script>
-        $('.remove').on('click', function(e) {
-            e.preventDefault();
-            const id = $(this).attr('value');
-            if (confirm('Warning: Are you sure you want to remove this data?')) {
-                $.ajax({
-                    type: 'POST',
-                    url: 'controls/delete_job.php',
-                    data: {
-                        id: id
-                    },
-                    success: function(response) {
-                        if (response > 0) {
-                            alert('Successfully Removed.');
-                            location.reload();
-                        }
-                    }
-                })
-            }
-
-        })
-    </script>
-
     <!-- modal Setting Update -->
     <script>
         function update() {
@@ -357,6 +320,48 @@ $view_job = $job->job_details();
 
         }
     </script>
+    <!-- select job details -->
+    <script>
+        $(document).on('click', '.edit', function(e) {
+            e.preventDefault();
+            const id = $(this).attr('value');
+            mydata = 'id=' + id;
+            $.ajax({
+                type: 'POST',
+                url: 'controls/display_job.php',
+                data: mydata,
+
+                success: function(html) {
+                    $('#edit-job').modal('show');
+                    $('#modal-body').html(html);
+                }
+            })
+        })
+    </script>
+    <!-- delete job list -->
+    <script>
+        $(document).on('click', '.remove', function(e) {
+            e.preventDefault();
+            const id = $(this).attr('value');
+            if (confirm('Warning: Are you sure you want to remove this data?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'controls/delete_job.php',
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response > 0) {
+                            alert('Successfully Removed.');
+                            location.reload();
+                        }
+                    }
+                })
+            }
+
+        })
+    </script>
+
 
 </body>
 

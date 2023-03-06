@@ -1,10 +1,11 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsusers.php';
+include '../objects/clsusers.class.php';
 session_start();
 
 $database = new intranetconnect();
 $db = $database->connect();
+
 
 $login = new clsusers($db);
 
@@ -22,6 +23,7 @@ if ($row = $Is_Login->fetch(PDO::FETCH_ASSOC)) {
     $_SESSION['id'] = $row['id'];
     $_SESSION['log_count'] = $row['log_count'];
     $_SESSION['access_type_id'] = $row['access_type_id'];
+    $_SESSION['onli'] = $row['onli'];
 
     echo 1;
 } else {

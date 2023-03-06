@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsusers.php';
+include '../objects/clsusers.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();
@@ -14,7 +14,7 @@ while ($row = $get_users->fetch(PDO::FETCH_ASSOC)) {
     echo '
                             <label>Firstname</label>
                             <div>       
-                                <input type="text" id="upd-id" class="form-control" hidden style="background-color:#3a3b3c; color:white;" value="' . $row['id'] . '">
+                                <input type="text" id="upd_id" class="form-control" hidden style="background-color:#3a3b3c; color:white;" value="' . $row['id'] . '">
                                 <input type="text" id="upd-firstname" class="form-control" style="background-color:#3a3b3c; color:white;" value="' . $row['firstname'] . '">
                             </div>
                             <label>Lastname</label>

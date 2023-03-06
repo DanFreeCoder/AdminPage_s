@@ -64,30 +64,28 @@
             backdrop-filter: saturate(200%) blur(25px);
             border-color: azure;
         }
+
+        .animate {
+            margin-left: 90px;
+        }
+
+        .form {
+            margin-bottom: 100vh;
+        }
     </style>
 </head>
 
 <body>
-    <section class="background-radial-gradient overflow-hidden p-0 position-relative" style="height: 110vh;">
-        <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+    <section class="background-radial-gradient overflow-hidden p-0 " style="height: 100vh;">
+        <div class="container px-4 py-2 px-md-5 text-center text-lg-start my-5">
             <div class="row gx-lg-5 align-items-center mb-5">
-                <div class="col-lg-6 mb-5 mb-lg-0 position-relative" style="z-index: 10">
-                    <h1 class="my-5 display-5 fw-bold ls-tight position-relative" style="color: hsl(218, 81%, 95%)">
-                        The best offer <br />
-                        <span class="position-relative" style="color: hsl(175, 81%, 75%)">for your business </span>
-                    </h1>
-                    <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                        Temporibus, expedita iusto veniam atque, magni tempora mollitia
-                        dolorum consequatur nulla, neque debitis eos reprehenderit quasi
-                        ab ipsum nisi dolorem modi. Quos?
-                    </p>
+                <div class="col-lg-6 mb-6 mb-lg-0">
+                    <h1 class="text-white">Innogroup</h1>
                 </div>
-                <div class="col-lg-6 mb-6 mb-lg-0 position-relative">
+                <div class="col-lg-6 mb-6 mb-lg-0 ">
                     <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
                     <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
-
-                    <div class="card background-radial-gradient">
+                    <div class="card background-radial-gradient ">
                         <div class="logo">
                             <center><img src="assets/img/innoland.png" class="mt-5"></center>
                         </div>
@@ -138,6 +136,7 @@
 
     <script>
         $(document).ready(function() {
+
             $('#btn_login').on('click', function(e) {
                 e.preventDefault();
                 const username = $('#username').val();

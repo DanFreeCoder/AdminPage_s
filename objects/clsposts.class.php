@@ -94,4 +94,14 @@ class clsposts
         $count->execute();
         return $count;
     }
+
+    public function posts($sql)
+    {
+
+        $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $count = $this->con->prepare($sql);
+
+        $count->execute();
+        return $count;
+    }
 }

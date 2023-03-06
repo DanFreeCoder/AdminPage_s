@@ -1,12 +1,7 @@
 <?php
-include './config/connection.php';
-include './objects/clslocals.php';
+include './autoloader/autoloader.php';
 
-$database = new intranetconnect();
-$db = $database->connect();
 
-$cebu = new clslocals($db);
-$view_cebu = $cebu->cebu_locals();
 
 ?>
 <!DOCTYPE html>
@@ -95,50 +90,8 @@ $view_cebu = $cebu->cebu_locals();
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody id="post-body">
-                                    <?php
-                                    while ($row = $view_cebu->fetch(PDO::FETCH_ASSOC)) {
-
-                                        if ($row['status'] != 0) {
-                                            $status = 'ACTIVE';
-                                            echo
-                                            '
-                                        <tr>
-                                            <td><input type="checkbox" name="form_cebu" class="checklist" value="' . $row['id'] . '"></td>
-                                           <td>' . $row['local_no'] . '</td>
-                                            <td>
-                                                <center>' . $row['name'] . '</center>
-                                            </td>
-                                            <td>
-                                                <center>' . $row['department'] . '</center>
-                                            </td>
-                                            <td style="color:green;">
-                                            <center>' . $status . '</center>
-                                        </td>
-                                        </tr>
-                                            ';
-                                        } else {
-                                            $status = 'INACTIVE';
-                                            echo
-                                            '
-                                        <tr>
-                                            <td><input type="checkbox" name="form_cebu" class="inactive checklist" value="' . $row['id'] . '"></td>
-                                           <td>' . $row['local_no'] . '</td>
-                                            <td>
-                                                <center>' . $row['name'] . '</center>
-                                            </td>
-                                            <td>
-                                                <center>' . $row['department'] . '</center>
-                                            </td>
-                                            <td style="color:red;">
-                                            <a href="#" class="status" value="' . $row['status'] . '" style="color:red; "><center data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Retrieve data?">' . $status . '</center></a>
-                                        </td>
-                                        </tr>
-                                            ';
-                                        }
-                                    }
-                                    ?>
-
+                                <tbody>
+                                    <!-- datatable data server side goes here -->
                                 </tbody>
                             </table>
                         </div>
@@ -228,8 +181,29 @@ $view_cebu = $cebu->cebu_locals();
 
     <script>
         $(document).ready(function() {
+            $('.table').DataTable({
+                "fnCreateRow": function(nRow, aData, iDataIndex) {
+                    $(nRow).attr('id', aData[0]);
+                },
+                'serverSide': 'true',
+                'processing': 'true',
+                'paging': 'true',
+                'order': [],
+                'ajax': {
+                    'url': 'controls/cebu_table.php',
+                    'type': 'post',
+                },
+                "aoColumnDefs": [{
+                    "bSortable": 'true',
+                    "aTargets": [4]
+                }, ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "targets": 0
+                }]
+            });
             // retrieve data
-            $('.status').on('click', function(e) {
+            function inactive() {
                 e.preventDefault();
                 const id = $('.inactive').val();
                 const status = $(this).val();
@@ -246,7 +220,7 @@ $view_cebu = $cebu->cebu_locals();
                         }
                     }
                 })
-            })
+            }
 
             // log out action
             $('.logout').on('click', function(e) {
@@ -261,7 +235,6 @@ $view_cebu = $cebu->cebu_locals();
             })
 
             <?php include 'includes/hover.php'; ?>
-            $('#post-table').DataTable();
             // change the color of datatable filter
             $('.dataTables_filter input').css("color", "whitesmoke").css("background-color", "#171819")
             $('.card .dataTables_length select').css("color", "whitesmoke").css("background-color", "#171819")
@@ -360,7 +333,7 @@ $view_cebu = $cebu->cebu_locals();
 
                         success: function(response) {
                             if (response > 0) {
-                                alert('Users successfully Removed!');
+                                alert('Local successfully Removed!');
                                 location.reload(500);
                             }
                         }
@@ -375,7 +348,7 @@ $view_cebu = $cebu->cebu_locals();
         $('#btn_update').on('click', function(e) {
             e.preventDefault();
 
-            const upd_id = $('#upd-id').val();
+            const upd_id = $('#upd_id').val();
             const upd_local_no = $('#upd-local_no').val();
             const upd_dept = $('#upd-department').val();
             const upd_name = $('#upd-name').val();
@@ -388,7 +361,7 @@ $view_cebu = $cebu->cebu_locals();
 
                 success: function(response) {
                     if (response > 0) {
-                        alert('Users Successfully update!');
+                        alert('Local Successfully update!');
                         location.reload();
                     }
                 }

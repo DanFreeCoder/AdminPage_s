@@ -1,3 +1,4 @@
+
 <?php
 include '../config/connection.php';
 include '../objects/clsitemcodes.php';
@@ -10,7 +11,7 @@ $code = new clsitemcodes($db);
 $output = array();
 
 header("Content-Type: application/json");
-$sql = "SELECT * FROM itemcodes ";
+$sql = "SELECT * FROM itemcodes";
 
 $get_all_rows = $code->item($sql);
 $total_all_rows = $get_all_rows->rowcount();
@@ -27,7 +28,7 @@ $columns = array(
 //if search is keyup query will process
 if (isset($_POST['search']['value'])) {
     $searh_value = $_POST['search']['value'];
-    $sql .= "WHERE itemcode LIKE '%" . $searh_value . "%'";
+    $sql .= " WHERE status != 0 AND itemcode LIKE '%" . $searh_value . "%'";
     $sql .= " OR itemdesc LIKE '%" . $searh_value . "%'";
     $sql .= " OR unit LIKE '%" . $searh_value . "%'";
     $sql .= " OR class LIKE '%" . $searh_value . "%'";
@@ -37,13 +38,13 @@ if (isset($_POST['search']['value'])) {
 if (isset($_POST['order'])) {
     $column_name = $_POST['order'][0]['column'];
     $order = $_POST['order'][0]['dir'];
-    $sql .= "ORDER BY " . $column[$column_name] . " " . $order . "";
+    $sql .= " ORDER BY " . $columns[$column_name] . " " . $order . ""; //OK
 }
 
-if (isset($_POST['length']) != 0) {
+if (isset($_POST['length']) != 0) { //ERROR
     $start = $_POST['start'];
     $length = $_POST['length'];
-    $sql .= " LIMIT " . $start . ", " . $length;
+    $sql .= " LIMIT " . $start . ", " . $length . " ";
 }
 
 
@@ -76,4 +77,4 @@ $output = array(
 );
 // print_r($data);
 // print_r($output);
-echo json_encode($output);
+echo json_encode($output, JSON_PRETTY_PRINT, JSON_UNESCAPED_UNICODE);

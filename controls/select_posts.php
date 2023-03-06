@@ -1,6 +1,6 @@
 <?php
 include '../config/connection.php';
-include '../objects/clsposts.php';
+include '../objects/clsposts.class.php';
 
 $database = new intranetconnect();
 $db = $database->connect();
@@ -16,7 +16,7 @@ while ($row = $select_post->fetch(PDO::FETCH_ASSOC)) {
     <form>
     <label>Post Title:</label>
     <div>
-    <input type="text" class="form-control" id="upd-id" value="' . $row['id'] . '" hidden>
+    <input type="text" class="form-control" id="upd_id" value="' . $row['id'] . '" hidden>
       <input type="text" class="form-control" id="upd-title" value="' . $row['type'] . '">
     </div>
 
